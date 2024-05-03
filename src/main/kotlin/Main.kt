@@ -1,4 +1,5 @@
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -9,18 +10,20 @@ import models.Mensaje
 
 suspend fun main() {
     val client = HttpClient(CIO)
-    var response: HttpResponse = client.get("http://localhost:8080/customer") {
+    val mensajeEnviado = "ping"
+    val response: HttpResponse = client.post("http://localhost:8080/ping") {
         contentType(ContentType.Application.Json)
-        setBody(Json.encodeToString(Mensaje("ping")))
-
+        setBody(Json.encodeToString(Mensaje(mensajeEnviado)))
     }
-    response = client.get("http://localhost:8080/customer")
-    println("Status: del GET : ${response.status}")
+    println("Status del POST: ${response.status}")
+
+    val responseText = response.body<String>()
+    println("Respuesta del servidor: $responseText")
+
+        val mensaje = Json.decodeFromString<Mensaje>(responseText)
+        println("Mensaje que le envio al servidor $mensajeEnviado")
+        println("Mensaje del servidor: ${mensaje.mensaje}")
+
+
     client.close()
-
-    var pong = Json.decodeFromString<List<Mensaje>>(response.bodyAsText())
-    println(pong)
-    for (c in pong) {
-        println("Mensaje : ${c.mensaje}")
-    }
 }

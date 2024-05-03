@@ -9,7 +9,7 @@ import kotlinx.serialization.json.Json
 import models.Mensaje
 
 suspend fun main() {
-    var contador = 0
+    var contador = 1
     while (true) {
         val client = HttpClient(CIO)
         val mensajeEnviado = "ping"
@@ -18,7 +18,7 @@ suspend fun main() {
             setBody(Json.encodeToString(Mensaje(mensajeEnviado)))
 
         }
-        if (contador == 0 || contador % 10 == 0) {
+        if (contador == 1 || contador % 10 == 0) { //Miramos cada 10 mensajes que el servidor sigue activo
             println("Status del POST: ${response.status}")
         }
 
